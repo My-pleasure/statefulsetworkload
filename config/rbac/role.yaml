@@ -23,12 +23,8 @@ rules:
   resources:
   - statefulsetworkloads
   verbs:
-  - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - core.oam.dev

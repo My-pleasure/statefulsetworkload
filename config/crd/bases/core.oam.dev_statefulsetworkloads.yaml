@@ -40,6 +40,14 @@ spec:
         spec:
           description: StatefulSetWorkloadSpec defines the desired state of StatefulSetWorkload
           properties:
+            arch:
+              description: CPUArchitecture required by this workload.
+              enum:
+              - i386
+              - amd64
+              - arm
+              - arm64
+              type: string
             containers:
               description: Containers of which this workload consists.
               items:
@@ -129,6 +137,97 @@ spec:
                       or URI-like representation of an OCI image. May be prefixed
                       with a registry address and should be suffixed with a tag.
                     type: string
+                  imagePullSecret:
+                    description: ImagePullSecret specifies the name of a Secret from
+                      which the credentials required to pull this container's image
+                      can be loaded.
+                    type: string
+                  livenessProbe:
+                    description: A LivenessProbe assesses whether this container is
+                      alive. Containers that fail liveness probes will be restarted.
+                    properties:
+                      exec:
+                        description: Exec probes a container's health by executing
+                          a command.
+                        properties:
+                          command:
+                            description: Command to be run by this probe.
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - command
+                        type: object
+                      failureThreshold:
+                        description: FailureThreshold specifies how many consecutive
+                          probes must fail in order for the container to be considered
+                          healthy.
+                        format: int32
+                        type: integer
+                      httpGet:
+                        description: HTTPGet probes a container's health by sending
+                          an HTTP GET request.
+                        properties:
+                          httpHeaders:
+                            description: HTTPHeaders to send with the GET request.
+                            items:
+                              description: A HTTPHeader to be passed when probing
+                                a container.
+                              properties:
+                                name:
+                                  description: Name of this HTTP header. Must be unique
+                                    per probe.
+                                  type: string
+                                value:
+                                  description: Value of this HTTP header.
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          path:
+                            description: Path to probe, e.g. '/healthz'.
+                            type: string
+                          port:
+                            description: Port to probe.
+                            format: int32
+                            type: integer
+                        required:
+                        - path
+                        - port
+                        type: object
+                      initialDelaySeconds:
+                        description: InitialDelaySeconds after a container starts
+                          before the first probe.
+                        format: int32
+                        type: integer
+                      periodSeconds:
+                        description: PeriodSeconds between probes.
+                        format: int32
+                        type: integer
+                      successThreshold:
+                        description: SuccessThreshold specifies how many consecutive
+                          probes must success in order for the container to be considered
+                          healthy.
+                        format: int32
+                        type: integer
+                      tcpSocket:
+                        description: TCPSocketProbe probes a container's health by
+                          connecting to a TCP socket.
+                        properties:
+                          port:
+                            description: Port this probe should connect to.
+                            format: int32
+                            type: integer
+                        required:
+                        - port
+                        type: object
+                      timeoutSeconds:
+                        description: TimeoutSeconds after which the probe times out.
+                        format: int32
+                        type: integer
+                    type: object
                   name:
                     description: Name of this container. Must be unique within its
                       workload
@@ -160,11 +259,226 @@ spec:
                       - name
                       type: object
                     type: array
+                  readinessProbe:
+                    description: A ReadinessProbe assesses whether this container
+                      is ready to serve requests. Containers that fail readiness probes
+                      will be withdrawn from service.
+                    properties:
+                      exec:
+                        description: Exec probes a container's health by executing
+                          a command.
+                        properties:
+                          command:
+                            description: Command to be run by this probe.
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - command
+                        type: object
+                      failureThreshold:
+                        description: FailureThreshold specifies how many consecutive
+                          probes must fail in order for the container to be considered
+                          healthy.
+                        format: int32
+                        type: integer
+                      httpGet:
+                        description: HTTPGet probes a container's health by sending
+                          an HTTP GET request.
+                        properties:
+                          httpHeaders:
+                            description: HTTPHeaders to send with the GET request.
+                            items:
+                              description: A HTTPHeader to be passed when probing
+                                a container.
+                              properties:
+                                name:
+                                  description: Name of this HTTP header. Must be unique
+                                    per probe.
+                                  type: string
+                                value:
+                                  description: Value of this HTTP header.
+                                  type: string
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          path:
+                            description: Path to probe, e.g. '/healthz'.
+                            type: string
+                          port:
+                            description: Port to probe.
+                            format: int32
+                            type: integer
+                        required:
+                        - path
+                        - port
+                        type: object
+                      initialDelaySeconds:
+                        description: InitialDelaySeconds after a container starts
+                          before the first probe.
+                        format: int32
+                        type: integer
+                      periodSeconds:
+                        description: PeriodSeconds between probes.
+                        format: int32
+                        type: integer
+                      successThreshold:
+                        description: SuccessThreshold specifies how many consecutive
+                          probes must success in order for the container to be considered
+                          healthy.
+                        format: int32
+                        type: integer
+                      tcpSocket:
+                        description: TCPSocketProbe probes a container's health by
+                          connecting to a TCP socket.
+                        properties:
+                          port:
+                            description: Port this probe should connect to.
+                            format: int32
+                            type: integer
+                        required:
+                        - port
+                        type: object
+                      timeoutSeconds:
+                        description: TimeoutSeconds after which the probe times out.
+                        format: int32
+                        type: integer
+                    type: object
+                  resources:
+                    description: Resources required by this container
+                    properties:
+                      cpu:
+                        description: CPU required by this container.
+                        properties:
+                          required:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            description: Required CPU count. 1.0 represents one CPU
+                              core.
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                        required:
+                        - required
+                        type: object
+                      extended:
+                        description: Extended resources required by this container.
+                        items:
+                          description: ExtendedResource required by a container.
+                          properties:
+                            name:
+                              description: Name of the external resource. Resource
+                                names are specified in kind.group/version format,
+                                e.g. motionsensor.ext.example.com/v1.
+                              type: string
+                            required:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              description: Required extended resource(s), e.g. 8 or
+                                "very-cool-widget"
+                              x-kubernetes-int-or-string: true
+                          required:
+                          - name
+                          - required
+                          type: object
+                        type: array
+                      gpu:
+                        description: GPU required by this container.
+                        properties:
+                          required:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            description: Required GPU count.
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                        required:
+                        - required
+                        type: object
+                      memory:
+                        description: Memory required by this container.
+                        properties:
+                          required:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            description: Required memory.
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                            x-kubernetes-int-or-string: true
+                        required:
+                        - required
+                        type: object
+                      volumes:
+                        description: Volumes required by this container.
+                        items:
+                          description: VolumeResource required by a container.
+                          properties:
+                            accessMode:
+                              description: AccessMode of this volume; RO (read only)
+                                or RW (read and write).
+                              enum:
+                              - RO
+                              - RW
+                              type: string
+                            disk:
+                              description: Disk requirements of this volume.
+                              properties:
+                                ephemeral:
+                                  description: Ephemeral specifies whether an external
+                                    disk needs to be mounted.
+                                  type: boolean
+                                required:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: Required disk space.
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              required:
+                              - required
+                              type: object
+                            mountPath:
+                              description: MouthPath at which this volume will be
+                                mounted within its container.
+                              type: string
+                            name:
+                              description: Name of this volume. Must be unique within
+                                its container.
+                              type: string
+                            sharingPolicy:
+                              description: SharingPolicy of this volume; Exclusive
+                                or Shared.
+                              enum:
+                              - Exclusive
+                              - Shared
+                              type: string
+                          required:
+                          - mountPath
+                          - name
+                          type: object
+                        type: array
+                    required:
+                    - cpu
+                    - memory
+                    type: object
                 required:
                 - image
                 - name
                 type: object
               type: array
+            osType:
+              description: OperatingSystem required by this workload.
+              enum:
+              - linux
+              - windows
+              type: string
+            serviceName:
+              description: 'TODO(QWQ): Depending on the nature of the OAM, it should
+                be the default here and specified in the servicetrait'
+              type: string
           required:
           - containers
           type: object

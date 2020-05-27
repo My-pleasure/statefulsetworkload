@@ -56,7 +56,7 @@ func (r *StatefulSetWorkloadReconciler) cleanupResources(ctx context.Context,
 	//var service
 	for _, res := range workload.Status.Resources {
 		uid := res.UID
-		if res.Kind == KindStatefulSet {
+		if res.Kind == KindStatefulSet && res.APIVersion == appsv1.SchemeGroupVersion.String() {
 			if uid != *statefulsetUID {
 				log.Info("Found an orphaned statefulset", "statefulset UID", *statefulsetUID, "orphaned UID", uid)
 				sn := client.ObjectKey{Name: res.Name, Namespace: workload.Namespace}
@@ -71,7 +71,7 @@ func (r *StatefulSetWorkloadReconciler) cleanupResources(ctx context.Context,
 				}
 				log.Info("Removed an orphaned statefulset", "statefulset UID", *statefulsetUID, "orphaned UID", uid)
 			}
-		} //else if res.Kind == KindService
+		}
 	}
 	return nil
 }
