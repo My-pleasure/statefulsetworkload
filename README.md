@@ -1,33 +1,21 @@
 # StatefulSetWorkload
-Run OAM StatefulSetWorkload on a Kubernetes cluster, like ContainerizedWorkload.
+You can use StatefulSetWorkload to render a StatefulSet on a Kubernetes cluster, like [ContainerizedWorkload](https://github.com/oam-dev/spec/blob/master/core/workloads/containerized_workload/containerized_workload.md).
 
-# Progress
-Implemented a StatefulSetWorkload Definition, including some fields: Name, Image, Env, Config, Port.
-
-# How to use it
-- Install OAM Application Controller and OAM Core workload and trait controller. (You can also follow [addon-oam-kubernetes-local](https://github.com/crossplane/addon-oam-kubernetes-local))
-```
-kubectl create namespace crossplane-system
-
-helm repo add crossplane-alpha https://charts.crossplane.io/alpha
-
-helm install crossplane --namespace crossplane-system crossplane-alpha/crossplane
-
-git clone git@github.com:crossplane/addon-oam-kubernetes-local.git
-
-kubectl create namespace oam-system
-
-helm install controller -n oam-system ./charts/oam-core-resources/ 
-```
-- Run statefulsetworkload controller.
+# Getting started
+- At first, you should follow [addon-oam-kubernetes-local](https://github.com/crossplane/addon-oam-kubernetes-local#getting-started). And install OAM Application Controller and OAM Core workload and trait controller.
+- Get the project statefulsetworkload to your GOPATH
 ```
 git clone https://github.com/My-pleasure/statefulsetworkload.git
+```
+- Fetch the statefulsetworkload image
+```
+docker pull chienwong/statefulsetworkload:v0.5
+```
+- Deploy the statefulsetworkload controller
+```
+cd statefulsetworkload
 
-cd $GOPATH/src/statefulsetworkload
-
-make install
-
-make run
+make deploy IMG=statefulsetworkload:v0.5
 ```
 - Apply the sample application config
 ```
