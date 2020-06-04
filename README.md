@@ -9,21 +9,21 @@ git clone https://github.com/My-pleasure/statefulsetworkload.git
 ```
 - Fetch the statefulsetworkload image
 ```
-docker pull chienwong/statefulsetworkload:v0.5
+docker pull chienwong/statefulsetworkload:v0.9
 ```
 - Deploy the statefulsetworkload controller
 ```
 cd statefulsetworkload
 
-make deploy IMG=statefulsetworkload:v0.5
+make deploy IMG=statefulsetworkload:v0.9
 ```
 - Apply the sample application config
 ```
-kubectl apply -f config/samples/statefulsetworkload-test.yaml
+kubectl apply -f config/samples/
 ```
 - Verify it you should see a statefulset looking like below
 ```
 kubectl get statefulset
-NAME                                     READY   AGE
-example-appconfig-statefulset-workload   1/1     13s
+NAME          READY   AGE
+example-web   1/1     13s
 ```

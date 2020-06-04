@@ -5,8 +5,3 @@ metadata:
 spec:
   components:
     - componentName: example-component
-      parameterValues:
-        - name: instance-name
-          value: example-appconfig-workload
-        - name: image
-          value: wordpress:php7.2

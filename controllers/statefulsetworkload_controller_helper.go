@@ -28,8 +28,6 @@ func (r *StatefulSetWorkloadReconciler) renderStatefulSet(ctx context.Context,
 	if !ok {
 		return nil, fmt.Errorf("internal error, statefulset is not redered correctly")
 	}
-	//the translator lib doesn't set the namespace
-	statefulset.Namespace = workload.Namespace
 	// k8s server-side patch complains if the protocol is not set
 	for i := 0; i < len(statefulset.Spec.Template.Spec.Containers); i++ {
 		for j := 0; j < len(statefulset.Spec.Template.Spec.Containers[i].Ports); j++ {
